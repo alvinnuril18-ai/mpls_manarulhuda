@@ -392,7 +392,7 @@
             // 4. Draw All Texts using Canvas API (ensures 'Outfit' web font renders perfectly across all devices)
             
             // Helper function to draw text with optional stroke
-            const drawText = (text, x, y, size, weight, color, strokeColor = null, strokeWidth = 0, letterSpacing = 0, align = "middle") => {
+            const drawText = (text, x, y, size, weight, color, strokeColor = null, strokeWidth = 0, letterSpacing = 0, align = "center") => {
                 ctx.textAlign = align;
                 ctx.textBaseline = "middle";
                 ctx.font = `${weight} ${size}px 'Outfit', sans-serif`;
