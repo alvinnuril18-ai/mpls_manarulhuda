@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twibbon MPLS SMP Manarul Huda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0c4a6e;
+        }
+
+        .app-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(2, 132, 199, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-section {
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #0284c7, #0369a1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.2rem;
+        }
+
+        h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fbbf24;
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f1f5f9;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+            border: 2px dashed #94a3b8;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .canvas-container.has-image {
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .controls {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            gap: 0.75rem;
+        }
+        
+        .controls.active {
+            display: flex;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f8fafc;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            min-width: 50px;
+        }
+
+        input[type=range] {
+            flex: 1;
+            accent-color: #0284c7;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #0284c7, #0369a1);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #0f172a;
+            border: 2px solid #e2e8f0;
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: #f8fafc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-logo {
+            background: #fbbf24;
+            color: #78350f;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+        .btn-logo:hover {
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .upload-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            color: #64748b;
+            pointer-events: none;
+        }
+
+        .upload-placeholder svg {
+            width: 56px;
+            height: 56px;
+            color: #94a3b8;
+        }
+        
+        .upload-placeholder span {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header-section">
+            <h1>Twibbon MPLS Premium</h1>
+            <h2>SMP Manarul Huda 2026</h2>
+        </div>
+
+        <input type="file" accept="image/*" id="fileInput" style="display: none;" />
+        <input type="file" accept="image/*" id="logoInput" style="display: none;" />
+
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="canvas"></canvas>
+            <div class="upload-placeholder" id="placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Klik untuk Upload Foto Anda</span>
+            </div>
+        </div>
+
+        <div class="controls" id="controls">
+            <div class="control-group">
+                <label>Peran</label>
+                <select id="roleSelect" style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 1rem; color: #0f172a; outline: none;">
+                    <option value="Peserta MPLS">Peserta MPLS</option>
+                    <option value="Panitia MPLS">Panitia MPLS</option>
+                    <option value="Guru Pendamping">Guru Pendamping</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Nama / Kelas</label>
+                <input type="text" id="nameInput" placeholder="Contoh: 7 EXPLORE / JEJE" value="7 EXPLORE" style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 1rem; color: #0f172a; outline: none;"/>
+            </div>
+            <div class="control-group">
+                <label>Instagram</label>
+                <input type="text" id="contactInput" placeholder="@smpmanarulhuda" value="@smpmanarulhuda" style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 1rem; color: #0f172a; outline: none;"/>
+            </div>
+            <div class="control-group">
+                <label>Zoom</label>
+                <input type="range" id="zoomRange" min="0.3" max="3" step="0.01" value="1" />
+            </div>
+            
+            <p style="font-size: 0.8rem; color: #64748b; text-align: center; margin: 0.2rem 0;">
+                Geser foto di atas untuk mengatur posisi
+            </p>
+            
+            <button class="btn" id="downloadBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download Twibbon
+            </button>
+            
+            <div class="button-row">
+                <button class="btn btn-secondary" id="changePhotoBtn">
+                    Ganti Foto
+                </button>
+                <button class="btn btn-logo" id="changeLogoBtn">
+                    + Pasang Logo Sekolah
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const logoInput = document.getElementById('logoInput');
+        const roleSelect = document.getElementById('roleSelect');
+        const nameInput = document.getElementById('nameInput');
+        const contactInput = document.getElementById('contactInput');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const placeholder = document.getElementById('placeholder');
+        const controls = document.getElementById('controls');
+        const zoomRange = document.getElementById('zoomRange');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const changePhotoBtn = document.getElementById('changePhotoBtn');
+        const changeLogoBtn = document.getElementById('changeLogoBtn');
+
+        let userImage = null;
+        let frameImg = null;
+        let schoolLogo = null;
+        
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let currentRole = 'Peserta MPLS';
+        let currentName = '7 EXPLORE';
+        let currentContact = '@smpmanarulhuda';
+        let hideLogo = false;
+
+        const CANVAS_SIZE = 1080;
+        canvas.width = CANVAS_SIZE;
+        canvas.height = CANVAS_SIZE;
+
+        // Playful ID Card Aesthetic - Pastel Academia Palette
+        const generateFrameDataURL = () => {
+            const safeName = currentName.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+            const safeContact = currentContact.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+            const logoText = hideLogo ? '' : `<text id="logoPlaceholderText" x="0" y="7" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-weight="bold" font-size="20" fill="#98A8F8" text-anchor="middle">LOGO</text>`;
+
+            const svg = `
+                <svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E4DFD3" stroke-width="1.5"/>
+                        </pattern>
+                        <filter id="shadow">
+                            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#736453" flood-opacity="0.1"/>
+                        </filter>
+                        <!-- Mask to punch a hole for the photo -->
+                        <mask id="holeMask">
+                            <rect width="1080" height="1080" fill="white"/> <!-- Everything visible by default -->
+                            <circle cx="320" cy="525" r="220" fill="black"/> <!-- Photo hole is invisible -->
+                        </mask>
+                    </defs>
+
+                    <!-- MASKED GROUP: Everything here will have a hole punched out for the photo -->
+                    <g mask="url(#holeMask)">
+                        <!-- Solid Background -->
+                        <rect width="1080" height="1080" fill="#F9F6F0"/>
+                        <!-- Grid Paper Texture -->
+                        <rect width="1080" height="1080" fill="url(#grid)"/>
+                        
+                        <!-- Playful Abstract Doodles (Background) - Pastel Colors -->
+                        <polygon points="-20,80 180,-20 90,180" fill="#E8A0BF" opacity="0.85"/>
+                        <circle cx="1020" cy="620" r="140" fill="#B1D7B4" opacity="0.75"/>
+                        <rect x="-60" y="850" width="220" height="160" rx="40" fill="#F3E99F" transform="rotate(-15 50 900)"/>
+                        <polygon points="1080,1080 750,1080 1080,750" fill="#98A8F8" opacity="0.65"/>
+
+                        <!-- Top Pill (Logo Container) - Increased Size -->
+                        <rect x="240" y="20" width="600" height="120" rx="60" fill="#ffffff" filter="url(#shadow)"/>
+                        
+                        <!-- Main ID Card Background -->
+                        <rect x="70" y="260" width="940" height="530" rx="40" fill="#FFFBEB" stroke="#ffffff" stroke-width="12" filter="url(#shadow)"/>
+                        
+                        <!-- ID Card Inner Border -->
+                        <rect x="90" y="280" width="900" height="490" rx="25" fill="none" stroke="#E2D7A7" stroke-width="4"/>
+                    </g>
+
+                    <!-- UNMASKED GROUP: Draws over the hole edges perfectly -->
+                    
+                    <!-- Top Logos -->
+                    <g transform="translate(540, 80)">
+                        <circle cx="0" cy="0" r="45" fill="#F0F4F8"/>
+                        ${logoText}
+                    </g>
+                    
+                    <!-- Top Title -->
+                    <text x="540" y="210" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="80" font-weight="900" stroke="#ffffff" stroke-width="25" stroke-linejoin="round" text-anchor="middle">SAYA SIAP MENGIKUTI</text>
+                    <text x="540" y="210" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="80" font-weight="900" fill="#6DA9E4" text-anchor="middle">SAYA SIAP MENGIKUTI</text>
+
+                    <!-- Photo Border Outline -->
+                    <circle cx="320" cy="525" r="220" fill="none" stroke="#B9B4C7" stroke-width="5"/>
+                    
+                    <!-- ID Card Details (Right Side) -->
+                    <!-- 5 Stars -->
+                    <text x="760" y="350" fill="#F3E99F" font-size="45" text-anchor="middle" letter-spacing="5">★★★★★</text>
+                    
+                    <!-- "ID CARD" Title -->
+                    <text x="760" y="420" font-family="'Segoe UI', Arial, sans-serif" font-size="65" font-weight="900" fill="#A0937D" text-anchor="middle" letter-spacing="2">ID CARD</text>
+                    
+                    <!-- Dotted Fields -->
+                    <text x="560" y="500" fill="#B0A695" font-size="28" font-family="'Courier New', monospace" font-weight="bold">nama   :</text>
+                    <text x="700" y="495" fill="#5C5470" font-size="32" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold">${safeName}</text>
+                    <line x1="690" y1="505" x2="970" y2="505" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
+
+                    <text x="560" y="570" fill="#B0A695" font-size="28" font-family="'Courier New', monospace" font-weight="bold">peran  :</text>
+                    <text x="700" y="565" fill="#5C5470" font-size="32" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold">${currentRole}</text>
+                    <line x1="690" y1="575" x2="970" y2="575" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
+
+                    <text x="560" y="640" fill="#B0A695" font-size="28" font-family="'Courier New', monospace" font-weight="bold">kontak :</text>
+                    <text x="700" y="635" fill="#5C5470" font-size="32" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold">${safeContact}</text>
+                    <line x1="690" y1="645" x2="970" y2="645" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
+
+                    <!-- Fake Postal Stamp -->
+                    <g transform="translate(860, 680) rotate(-20)" opacity="0.4">
+                        <circle cx="0" cy="0" r="80" fill="none" stroke="#B9B4C7" stroke-width="4"/>
+                        <circle cx="0" cy="0" r="70" fill="none" stroke="#B9B4C7" stroke-width="1.5"/>
+                        <text x="0" y="-35" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="bold" fill="#B9B4C7" text-anchor="middle" letter-spacing="4">POSTAL SERVICE</text>
+                        <text x="0" y="15" font-family="'Segoe UI', Arial, sans-serif" font-size="30" fill="#B9B4C7" text-anchor="middle" font-weight="900">APPROVED</text>
+                        <text x="0" y="50" font-family="'Segoe UI', Arial, sans-serif" font-size="14" fill="#B9B4C7" text-anchor="middle" letter-spacing="2">JULY 2026</text>
+                        <!-- Signature Scribble -->
+                        <path d="M-70,-20 Q-30,50 0,0 T70,20" fill="none" stroke="#B9B4C7" stroke-width="5"/>
+                    </g>
+
+                    <!-- Giant MPLS Text Overlapping Bottom -->
+                    <text x="540" y="900" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="160" font-weight="900" stroke="#ffffff" stroke-width="35" stroke-linejoin="round" text-anchor="middle" filter="url(#shadow)">MPLS</text>
+                    <text x="540" y="900" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="160" font-weight="900" fill="#6DA9E4" text-anchor="middle">MPLS</text>
+
+                    <!-- 2026 Badge -->
+                    <g transform="translate(800, 810) rotate(-8)" filter="url(#shadow)">
+                        <rect x="-80" y="-35" width="160" height="70" rx="35" fill="#FF8787" stroke="#ffffff" stroke-width="8"/>
+                        <text x="0" y="12" font-family="'Segoe UI', Arial, sans-serif" font-size="40" font-weight="900" fill="#ffffff" text-anchor="middle">2026</text>
+                    </g>
+
+                    <!-- School Name Title Bottom -->
+                    <text x="540" y="980" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="75" font-weight="900" stroke="#ffffff" stroke-width="25" stroke-linejoin="round" text-anchor="middle" letter-spacing="2">SMP MANARUL HUDA</text>
+                    <text x="540" y="980" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="75" font-weight="900" fill="#6DA9E4" text-anchor="middle" letter-spacing="2">SMP MANARUL HUDA</text>
+                    
+                    <!-- Side Badges -->
+                    <text x="170" y="1000" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="40" font-weight="900" stroke="#ffffff" stroke-width="15" stroke-linejoin="round" text-anchor="middle" transform="rotate(-12 170 1000)">MPLS RAMAH</text>
+                    <text x="170" y="1000" font-family="'Comic Sans MS', cursive, 'Segoe UI', sans-serif" font-size="40" font-weight="900" fill="#F0A04B" text-anchor="middle" transform="rotate(-12 170 1000)">MPLS RAMAH</text>
+                </svg>
+            `;
+            // Unescape + encodeURIComponent for Unicode (emojis/accents) safety
+            return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+        };
+
+        const initFrame = () => {
+            frameImg = new Image();
+            frameImg.crossOrigin = 'anonymous';
+            frameImg.onload = render;
+            frameImg.src = generateFrameDataURL();
+        };
+
+        const render = () => {
+            if (!frameImg) return;
+            
+            // Background Clear
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+            // 1. Draw User Image
+            if (userImage) {
+                const imgAspect = userImage.width / userImage.height;
+                let drawWidth = CANVAS_SIZE;
+                let drawHeight = CANVAS_SIZE / imgAspect;
+                
+                if (drawHeight < CANVAS_SIZE) {
+                    drawHeight = CANVAS_SIZE;
+                    drawWidth = CANVAS_SIZE * imgAspect;
+                }
+                
+                drawWidth *= scale;
+                drawHeight *= scale;
+                
+                // Center the photo on the hole in the ID Card (x=110, y=300, w=420, h=450) -> Center is (320, 525)
+                const cx = 320;
+                const cy = 525;
+                const x = cx - (drawWidth / 2) + offsetX;
+                const y = cy - (drawHeight / 2) + offsetY;
+                
+                ctx.drawImage(userImage, x, y, drawWidth, drawHeight);
+            }
+            
+            // 2. Draw Aesthetic Frame
+            ctx.drawImage(frameImg, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+            // 3. Draw School Logo if uploaded
+            if (schoolLogo) {
+                // In the ID Card SVG, the logo is placed at translate(540, 80) with r=45
+                const logoSize = 90; // 2 * 45
+                
+                ctx.save();
+                ctx.translate(540, 80);
+                ctx.beginPath();
+                ctx.arc(0, 0, logoSize/2, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(schoolLogo, -logoSize/2, -logoSize/2, logoSize, logoSize);
+                ctx.restore();
+            }
+        };
+
+        // Handlers
+        canvasContainer.addEventListener('click', () => {
+            if (!userImage) fileInput.click();
+        });
+
+        changePhotoBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        changeLogoBtn.addEventListener('click', () => {
+            logoInput.click();
+        });
+        nameInput.addEventListener('input', (e) => {
+            currentName = e.target.value || ' ';
+            updateFrame();
+        });
+        
+        contactInput.addEventListener('input', (e) => {
+            currentContact = e.target.value || ' ';
+            updateFrame();
+        });
+
+        roleSelect.addEventListener('change', (e) => {
+            currentRole = e.target.value;
+            updateFrame();
+        });
+
+        function updateFrame() {
+            frameImg.src = generateFrameDataURL();
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    userImage = img;
+                    scale = 1;
+                    offsetX = 0;
+                    offsetY = 0;
+                    zoomRange.value = 1;
+                    
+                    canvasContainer.classList.add('has-image');
+                    placeholder.style.display = 'none';
+                    controls.classList.add('active');
+                    render();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        logoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    schoolLogo = img;
+                    schoolLogo = img;
+                    hideLogo = true;
+                    updateFrame();
+                    render();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        zoomRange.addEventListener('input', (e) => {
+            scale = parseFloat(e.target.value);
+            render();
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'Twibbon-MPLS-Manarul-Huda.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Dragging Logic
+        const startDrag = (clientX, clientY) => {
+            if (!userImage) return;
+            isDragging = true;
+            dragStart = { x: clientX, y: clientY };
+        };
+
+        const doDrag = (clientX, clientY) => {
+            if (!isDragging || !userImage) return;
+            const dx = clientX - dragStart.x;
+            const dy = clientY - dragStart.y;
+            
+            const rect = canvasContainer.getBoundingClientRect();
+            const ratio = CANVAS_SIZE / rect.width;
+
+            offsetX += dx * ratio;
+            offsetY += dy * ratio;
+            dragStart = { x: clientX, y: clientY };
+            render();
+        };
+
+        const endDrag = () => {
+            isDragging = false;
+        };
+
+        canvasContainer.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+        window.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+        window.addEventListener('mouseup', endDrag);
+
+        canvasContainer.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY), {passive: false});
+        window.addEventListener('touchmove', (e) => {
+            if(isDragging) e.preventDefault();
+            doDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }, {passive: false});
+        window.addEventListener('touchend', endDrag);
+
+        initFrame();
+    </script>
+</body>
+</html>
