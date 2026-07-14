@@ -453,13 +453,13 @@
             ctx.restore();
 
             // SMP MANARUL HUDA
-            drawText("SMP MANARUL HUDA", 540, 980, 75, 900, "#6DA9E4", "#ffffff", 25);
+            drawText("SMP MANARUL HUDA", 540, 1000, 60, 900, "#6DA9E4", "#ffffff", 20);
 
-            // MPLS RAMAH
+            // MPLS RAMAH (Moved to Top Left to avoid overlap)
             ctx.save();
-            ctx.translate(170, 1000);
-            ctx.rotate(-12 * Math.PI / 180);
-            drawText("MPLS RAMAH", 0, 0, 40, 900, "#F0A04B", "#ffffff", 15);
+            ctx.translate(160, 170);
+            ctx.rotate(-15 * Math.PI / 180);
+            drawText("MPLS RAMAH", 0, 0, 45, 900, "#F0A04B", "#ffffff", 15);
             ctx.restore();
 
             // Draw Logo Placeholder Text (if no logo uploaded)
