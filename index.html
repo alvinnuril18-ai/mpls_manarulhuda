@@ -294,10 +294,6 @@
 
         // Playful ID Card Aesthetic - Pastel Academia Palette
         const generateFrameDataURL = () => {
-            const safeName = currentName.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-            const safeContact = currentContact.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-            const logoText = hideLogo ? '' : `<text id="logoPlaceholderText" x="0" y="7" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-weight="bold" font-size="20" fill="#98A8F8" text-anchor="middle">LOGO</text>`;
-
             const svg = `
                 <svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -307,102 +303,49 @@
                         <filter id="shadow">
                             <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#736453" flood-opacity="0.1"/>
                         </filter>
-                        <!-- Mask to punch a hole for the photo -->
                         <mask id="holeMask">
-                            <rect width="1080" height="1080" fill="white"/> <!-- Everything visible by default -->
-                            <circle cx="320" cy="525" r="220" fill="black"/> <!-- Photo hole is invisible -->
+                            <rect width="1080" height="1080" fill="white"/>
+                            <circle cx="320" cy="525" r="220" fill="black"/>
                         </mask>
                     </defs>
 
-                    <!-- MASKED GROUP: Everything here will have a hole punched out for the photo -->
                     <g mask="url(#holeMask)">
-                        <!-- Solid Background -->
                         <rect width="1080" height="1080" fill="#F9F6F0"/>
-                        <!-- Grid Paper Texture -->
                         <rect width="1080" height="1080" fill="url(#grid)"/>
                         
-                        <!-- Playful Abstract Doodles (Background) - Pastel Colors -->
                         <polygon points="-20,80 180,-20 90,180" fill="#E8A0BF" opacity="0.85"/>
                         <circle cx="1020" cy="620" r="140" fill="#B1D7B4" opacity="0.75"/>
                         <rect x="-60" y="850" width="220" height="160" rx="40" fill="#F3E99F" transform="rotate(-15 50 900)"/>
                         <polygon points="1080,1080 750,1080 1080,750" fill="#98A8F8" opacity="0.65"/>
 
-                        <!-- Top Pill (Logo Container) - Increased Size -->
                         <rect x="240" y="20" width="600" height="120" rx="60" fill="#ffffff" filter="url(#shadow)"/>
                         
-                        <!-- Main ID Card Background -->
                         <rect x="70" y="260" width="940" height="530" rx="40" fill="#FFFBEB" stroke="#ffffff" stroke-width="12" filter="url(#shadow)"/>
                         
-                        <!-- ID Card Inner Border -->
                         <rect x="90" y="280" width="900" height="490" rx="25" fill="none" stroke="#E2D7A7" stroke-width="4"/>
                     </g>
 
-                    <!-- UNMASKED GROUP: Draws over the hole edges perfectly -->
-                    
-                    <!-- Top Logos -->
                     <g transform="translate(540, 80)">
                         <circle cx="0" cy="0" r="45" fill="#F0F4F8"/>
-                        ${logoText}
                     </g>
                     
-                    <!-- Top Title -->
-                    <text x="540" y="210" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="80" font-weight="900" stroke="#ffffff" stroke-width="25" stroke-linejoin="round" text-anchor="middle">SAYA SIAP MENGIKUTI</text>
-                    <text x="540" y="210" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="80" font-weight="900" fill="#6DA9E4" text-anchor="middle">SAYA SIAP MENGIKUTI</text>
-
-                    <!-- Photo Border Outline -->
                     <circle cx="320" cy="525" r="220" fill="none" stroke="#B9B4C7" stroke-width="5"/>
                     
-                    <!-- ID Card Details (Right Side) -->
-                    <!-- 5 Stars -->
-                    <text x="760" y="350" fill="#F3E99F" font-size="45" text-anchor="middle" letter-spacing="5">★★★★★</text>
-                    
-                    <!-- "ID CARD" Title -->
-                    <text x="760" y="420" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="65" font-weight="900" fill="#A0937D" text-anchor="middle" letter-spacing="2">ID CARD</text>
-                    
-                    <!-- Dotted Fields -->
-                    <text x="560" y="500" fill="#B0A695" font-size="28" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">nama   :</text>
-                    <text x="700" y="495" fill="#5C5470" font-size="32" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">${safeName}</text>
                     <line x1="690" y1="505" x2="970" y2="505" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
-
-                    <text x="560" y="570" fill="#B0A695" font-size="28" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">peran  :</text>
-                    <text x="700" y="565" fill="#5C5470" font-size="32" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">${currentRole}</text>
                     <line x1="690" y1="575" x2="970" y2="575" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
-
-                    <text x="560" y="640" fill="#B0A695" font-size="28" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">kontak :</text>
-                    <text x="700" y="635" fill="#5C5470" font-size="32" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="bold">${safeContact}</text>
                     <line x1="690" y1="645" x2="970" y2="645" stroke="#D3C5B5" stroke-dasharray="5,5" stroke-width="3"/>
 
-                    <!-- Fake Postal Stamp -->
                     <g transform="translate(860, 680) rotate(-20)" opacity="0.4">
                         <circle cx="0" cy="0" r="80" fill="none" stroke="#B9B4C7" stroke-width="4"/>
                         <circle cx="0" cy="0" r="70" fill="none" stroke="#B9B4C7" stroke-width="1.5"/>
-                        <text x="0" y="-35" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="bold" fill="#B9B4C7" text-anchor="middle" letter-spacing="4">POSTAL SERVICE</text>
-                        <text x="0" y="15" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="30" fill="#B9B4C7" text-anchor="middle" font-weight="900">APPROVED</text>
-                        <text x="0" y="50" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#B9B4C7" text-anchor="middle" letter-spacing="2">JULY 2026</text>
-                        <!-- Signature Scribble -->
                         <path d="M-70,-20 Q-30,50 0,0 T70,20" fill="none" stroke="#B9B4C7" stroke-width="5"/>
                     </g>
 
-                    <!-- Giant MPLS Text Overlapping Bottom -->
-                    <text x="540" y="900" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="160" font-weight="900" stroke="#ffffff" stroke-width="35" stroke-linejoin="round" text-anchor="middle" filter="url(#shadow)">MPLS</text>
-                    <text x="540" y="900" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="160" font-weight="900" fill="#6DA9E4" text-anchor="middle">MPLS</text>
-
-                    <!-- 2026 Badge -->
                     <g transform="translate(800, 810) rotate(-8)" filter="url(#shadow)">
                         <rect x="-80" y="-35" width="160" height="70" rx="35" fill="#FF8787" stroke="#ffffff" stroke-width="8"/>
-                        <text x="0" y="12" font-family="'Segoe UI', Arial, sans-serif" font-size="40" font-weight="900" fill="#ffffff" text-anchor="middle">2026</text>
                     </g>
-
-                    <!-- School Name Title Bottom -->
-                    <text x="540" y="980" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="75" font-weight="900" stroke="#ffffff" stroke-width="25" stroke-linejoin="round" text-anchor="middle" letter-spacing="2">SMP MANARUL HUDA</text>
-                    <text x="540" y="980" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="75" font-weight="900" fill="#6DA9E4" text-anchor="middle" letter-spacing="2">SMP MANARUL HUDA</text>
-                    
-                    <!-- Side Badges -->
-                    <text x="170" y="1000" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="900" stroke="#ffffff" stroke-width="15" stroke-linejoin="round" text-anchor="middle" transform="rotate(-12 170 1000)">MPLS RAMAH</text>
-                    <text x="170" y="1000" font-family="'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="900" fill="#F0A04B" text-anchor="middle" transform="rotate(-12 170 1000)">MPLS RAMAH</text>
                 </svg>
             `;
-            // Unescape + encodeURIComponent for Unicode (emojis/accents) safety
             return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
         };
 
@@ -443,10 +386,88 @@
                 ctx.drawImage(userImage, x, y, drawWidth, drawHeight);
             }
             
-            // 2. Draw Aesthetic Frame
+            // 3. Draw Aesthetic Frame SVG Background (without text)
             ctx.drawImage(frameImg, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-            // 3. Draw School Logo if uploaded
+            // 4. Draw All Texts using Canvas API (ensures 'Outfit' web font renders perfectly across all devices)
+            
+            // Helper function to draw text with optional stroke
+            const drawText = (text, x, y, size, weight, color, strokeColor = null, strokeWidth = 0, letterSpacing = 0, align = "middle") => {
+                ctx.textAlign = align;
+                ctx.textBaseline = "middle";
+                ctx.font = `${weight} ${size}px 'Outfit', sans-serif`;
+                ctx.lineJoin = "round";
+                // Note: Canvas doesn't natively support letter-spacing perfectly in older browsers, but we don't strictly need it for aesthetic.
+                if (strokeColor && strokeWidth > 0) {
+                    ctx.lineWidth = strokeWidth;
+                    ctx.strokeStyle = strokeColor;
+                    ctx.strokeText(text, x, y);
+                }
+                ctx.fillStyle = color;
+                ctx.fillText(text, x, y);
+            };
+
+            // Top Title
+            drawText("SAYA SIAP MENGIKUTI", 540, 210, 80, 900, "#6DA9E4", "#ffffff", 25);
+            
+            // 5 Stars
+            drawText("★★★★★", 760, 350, 45, 400, "#F3E99F");
+            
+            // "ID CARD"
+            drawText("ID CARD", 760, 420, 65, 900, "#A0937D");
+            
+            // Form Data
+            drawText("nama   :", 560, 500, 28, "bold", "#B0A695", null, 0, 0, "left");
+            drawText(currentName, 700, 495, 32, "bold", "#5C5470", null, 0, 0, "left");
+            
+            drawText("peran  :", 560, 570, 28, "bold", "#B0A695", null, 0, 0, "left");
+            drawText(currentRole, 700, 565, 32, "bold", "#5C5470", null, 0, 0, "left");
+            
+            drawText("kontak :", 560, 640, 28, "bold", "#B0A695", null, 0, 0, "left");
+            drawText(currentContact, 700, 635, 32, "bold", "#5C5470", null, 0, 0, "left");
+
+            // Postal Stamp Text (Needs Rotation)
+            ctx.save();
+            ctx.translate(860, 680);
+            ctx.rotate(-20 * Math.PI / 180);
+            ctx.globalAlpha = 0.4;
+            drawText("POSTAL SERVICE", 0, -35, 18, "bold", "#B9B4C7");
+            drawText("APPROVED", 0, 15, 30, 900, "#B9B4C7");
+            drawText("JULY 2026", 0, 50, 14, 400, "#B9B4C7");
+            ctx.restore();
+
+            // Bottom Badges and Texts
+            // Shadow for Giant MPLS
+            ctx.save();
+            ctx.shadowColor = "rgba(115, 100, 83, 0.1)";
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 8;
+            drawText("MPLS", 540, 900, 160, 900, "#6DA9E4", "#ffffff", 35);
+            ctx.restore();
+            
+            // 2026
+            ctx.save();
+            ctx.translate(800, 810);
+            ctx.rotate(-8 * Math.PI / 180);
+            drawText("2026", 0, 12, 40, 900, "#ffffff");
+            ctx.restore();
+
+            // SMP MANARUL HUDA
+            drawText("SMP MANARUL HUDA", 540, 980, 75, 900, "#6DA9E4", "#ffffff", 25);
+
+            // MPLS RAMAH
+            ctx.save();
+            ctx.translate(170, 1000);
+            ctx.rotate(-12 * Math.PI / 180);
+            drawText("MPLS RAMAH", 0, 0, 40, 900, "#F0A04B", "#ffffff", 15);
+            ctx.restore();
+
+            // Draw Logo Placeholder Text (if no logo uploaded)
+            if (!schoolLogo && !hideLogo) {
+                drawText("LOGO", 540, 87, 20, "bold", "#98A8F8");
+            }
+
+            // 5. Draw School Logo if uploaded
             if (schoolLogo) {
                 // In the ID Card SVG, the logo is placed at translate(540, 80) with r=45
                 const logoSize = 90; // 2 * 45
@@ -585,6 +606,9 @@
         window.addEventListener('touchend', endDrag);
 
         initFrame();
+        updateFrame();
+        
+        document.fonts.ready.then(updateFrame);
     </script>
 </body>
 </html>
